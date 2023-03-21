@@ -13,6 +13,21 @@ from tkinter import *
 # Define where the images are saved
 #imgDir = 'C:\\Users\\ichR PC-2022\\Desktop\\Tool for Gabe'
 
+""" Global Variables """
+SW_NAME = '3D Files Batch Processing Tool'
+SW_VER  = 'v0.1'
+
+FLAG_DeleteToggle = False
+
+""" GUI Function Definitions (Commands) """
+def toggleDelete():
+    global FLAG_DeleteToggle
+
+    if CHKBTN_DeleteToggle_status.get() == 1:
+        FLAG_DeleteToggle = True
+    else:
+        FLAG_DeleteToggle = False
+
 def open_directories():
     # Allow user to select a directory and store it in global var
     # called folder_path
@@ -31,7 +46,8 @@ def resize_and_convert_to_webp(source_path):
         out_path = fileName + ".webp"
         img.save(out_path)
         # Remove original files (.jpg and .png)
-        os.remove(source_path)
+        if FLAG_DeleteToggle:
+            os.remove(source_path)
 
 def process_files():
     # Find the 3D Object File
@@ -80,15 +96,25 @@ def process_files():
             future.result()
     '''
 
+""" GUI Elements"""
+
 root = Tk()
+root.title(SW_NAME + " " + SW_VER)
+root.bind_class("Button", "<Key-Return>", lambda event: event.widget.invoke())
+root.bind_class("Checkbutton", "<Key-Return>", lambda event: event.widget.invoke())
+root.geometry('400x100')
 
 browse_files_btn = Button(master=root, text="Browse Directories", command=open_directories)
 browse_files_btn.pack()
 
+CHKBTN_DeleteToggle_status = IntVar()
+delete_originals_chkbtn = Checkbutton(master=root, text="Delete Original Files", command=toggleDelete, variable=CHKBTN_DeleteToggle_status)
+delete_originals_chkbtn.pack()
+
 process_images_btn = Button(master=root, text="Process Images", command=process_files)
 process_images_btn.pack()
 
-current_directory_lbl = Label(master=root, text="Current Directory: ")
+current_directory_lbl = Label(master=root, text="Current Directory: No directory selected.")
 current_directory_lbl.pack()
 
 mainloop()
