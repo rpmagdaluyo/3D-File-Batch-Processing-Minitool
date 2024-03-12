@@ -1,0 +1,9 @@
+*.png
+*.jpg
+*.webp
+*.bin
+*.gltf
+*.spec
+/build
+/dist
+
